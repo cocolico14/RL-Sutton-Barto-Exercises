@@ -27,7 +27,8 @@ class EpsilonGreedy():
         count = self.pullCount[i]
         value = self.values[i]
         # newEstimate = oldEstimate + step_size * (target - oldEstimate)
-        self.values[i] = value + (1/count) * (reward - value)
+        if self.alpha is None : self.values[i] = value + (1/count) * (reward - value)
+        else: self.values[i] = value + (self.alpha) * (reward - value)
 
     def refresh(self):
         self.values.fill(0)
@@ -78,7 +79,7 @@ if __name__ == '__main__':
     play = 1000
     run = 2000
 
-    algos = [EpsilonGreedy(armCount, 0.5)]
+    algos = [EpsilonGreedy(armCount, 0.04, 0.1)]
     colors = ['blue', 'red', 'green', 'magenta', 'cyan']
     rewardData = np.zeros((len(algos), play, run))
     optimalityData = np.zeros((len(algos), play, run))
@@ -89,7 +90,7 @@ if __name__ == '__main__':
         np.random.seed(r)
         arms[r] = np.random.randn(armCount)
 
-    for r in (range(run)):
+    for r in tqdm(range(run)):
 
         optimalChoice = np.argmax(arms[r])
 
